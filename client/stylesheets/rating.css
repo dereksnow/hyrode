@@ -1,0 +1,19 @@
+.rate_widget {
+    padding: 10px;
+}
+
+.ratings_stars {
+    background: url('../../star-off.png') no-repeat;
+    float: left;
+    height:     16px;  
+    padding:    2px;  
+    width:      16px;
+}
+
+.ratings_vote {
+    background: url('../../star-on.png') no-repeat;
+}
+
+.ratings_over {
+    background: url('../../star-on.png') no-repeat;
+}

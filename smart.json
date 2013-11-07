@@ -1,0 +1,10 @@
+{
+  "packages": {
+    "bootstrap-3": {},
+    "spin": {},
+    "moment": {},
+    "accounts-ui-bootstrap-3": {},
+    "router": {},
+    "paginated-subscription": {}
+  }
+}
