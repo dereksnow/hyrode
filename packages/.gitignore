@@ -10,3 +10,5 @@ accounts-ui-bootstrap-dropdown
 mongodb-aggregation
 mongodb-server-aggregation
 paginated-subscription
+iron-router
+iron-router-progress

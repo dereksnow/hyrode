@@ -12,3 +12,5 @@ moment
 accounts-ui-bootstrap-3
 router
 paginated-subscription
+iron-router
+iron-router-progress

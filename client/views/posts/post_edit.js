@@ -1,7 +1,7 @@
 Template.postEdit.helpers({
-    post: function() {
-        return Posts.findOne(Session.get('currentPostId'));
-    },
+    // post: function() {
+    //     return Posts.findOne(Session.get('currentPostId'));
+    // },
     features: function(){
         var post = this;
         return Features.find().map(function(feature) {
@@ -23,7 +23,9 @@ Template.postEdit.events({
     'submit form': function(e) {
         e.preventDefault();
 
-        var currentPostId = Session.get('currentPostId');
+        // this.resource contains the post object as
+        // defined in router.js
+        var currentPostId = this.resource._id;
         var features = [];
 
         $('input[name=feature]:checked').each(function() {
@@ -35,31 +37,47 @@ Template.postEdit.events({
 
         tags = insertTags();
 
-        var postProperties = {
+        var properties = {
             url: $(e.target).find('[name=url]').val(),
             title: $(e.target).find('[name=title]').val(),
             features: features,
             tags: tags
         }
 
-        Posts.update(currentPostId, {$set: postProperties}, function(error){
-            if(error) {
-                //display the error to the user
-                alert(error.reason);                
-            }
-            else {
-                Meteor.Router.to('postPage', currentPostId);
-            }
-        });
+        if(this.bookmark) {
+            properties.personal = $('#access').is(':checked');
+            Meteor.call('pageBookmark', properties, function(error, id){
+                if(error){
+                    throwError(error.reason);
+                }
+                // change route to bookmarks page for user once implemented
+                Router.go('home');
+            });
+        }
+        else{
+            Posts.update(currentPostId, {$set: properties}, function(error){
+                if(error) {
+                    //display the error to the user
+                    alert(error.reason);                
+                }
+                else {
+                    Router.go('postPage', {_id: currentPostId});
+                }
+            }); 
+        }
+
+
+   
+
     },
 
     'click .delete': function(e) {
         e.preventDefault();
 
         if (confirm("Delete this post?")) {
-            var currentPostId = Session.get('currentPostId');
+            var currentPostId = this._id;
             Posts.remove(currentPostId);
-            Meteor.Router.to('postsList');
+            Router.go('home');
         }
     }
 });

@@ -9,6 +9,13 @@ Template.postItem.helpers({
     	return a.hostname;
   	},
 
+    myBookmark: function() {
+        return {
+            _id: this._id,
+            user: Meteor.user().username
+        };
+    },
+
 	features: function() {
 		return this.features;
 	},
@@ -35,7 +42,8 @@ Template.postItem.helpers({
     bookmarkedClass: function() {
         var postId = this._id;
         var user = Meteor.user();
-        if (postId && user && !_.include(user.pages_saved, postId)) {
+
+        if (postId && user) {
             return 'btn-primary pageBookmarkable';
         }        
         else {
@@ -46,13 +54,13 @@ Template.postItem.helpers({
 });
 
 Template.postItem.events({
-
+   
     'click .upvotable': function(e){
-        e.preventDefault();
-        var post = this;
+        e.preventDefault();        
         if(!Meteor.user()){
             throwError("Please log in first");
         }
+        var post = this;        
         Meteor.call('upvotePost', post._id);
     },
 
@@ -65,18 +73,18 @@ Template.postItem.events({
         Meteor.call('cancelUpvotePost', post._id);
     },
     
-    'click .pageBookmarkable': function(e){
-        e.preventDefault();
-        var post = this;
-        var user = Meteor.user();
-        if(!user){
-            throwError("Please log in first");
-        }
-        // .update({score: {$gt: 10}},
-        //            {$addToSet: {badges: "Winner"}},
-        //            {multi: true});
-        Meteor.call('bookmarkPage', post._id);
-    },    
+    // 'click .pageBookmarkable': function(e){
+    //     e.preventDefault();
+    //     var post = this;
+    //     var user = Meteor.user();
+    //     if(!user){
+    //         throwError("Please log in first");
+    //     }
+    //     // .update({score: {$gt: 10}},
+    //     //            {$addToSet: {badges: "Winner"}},
+    //     //            {multi: true});
+    //     Meteor.call('bookmarkPage', post._id);
+    // },    
 
 
 });

@@ -1,0 +1,46 @@
+Meteor.Router.add({
+	'/': {to: 'newPosts', as: 'home'},
+	'/best': 'bestPosts',
+	'/new': 'newPosts',
+	'/posts/:_id': {
+		to: 'postPage',
+		and: function(id) { Session.set('currentPostId', id); }
+	},
+	'/posts/:_id/edit': {
+		to: 'postEdit',
+		and: function(id) { Session.set('currentPostId', id); }
+	},
+
+	// '/users/derek/bookmarks/:_id'
+	// '/users/derek/bookmarks/:_id/edit'
+	// create route for initial bookmark and one for edit
+	// may want to use same template with session variable
+	// to indicate whether it is an edit or initial bookmark
+	// actions like delete can be conditionally defined if 
+	// it is an edit
+	'/bookmarks/:_id/edit': {
+		to: 'pageBookmarkEdit',
+		and: function(id) { Session.set('currentPageBookmarkId', id); }
+	},
+	'/submit': 'postSubmit'
+});
+Meteor.Router.filters({
+	'requiredLogin': function(page) {
+		if(Meteor.user()){
+			return page;
+		}
+		else if (Meteor.loggingIn()) {
+			return 'loading';
+		}
+		else {
+			return 'accessDenied';
+		}
+			
+	},
+	'clearErrors': function(page) {
+		clearErrors();
+		return page;
+	}
+});
+Meteor.Router.filter('requiredLogin', {only: ['postSubmit', 'pageBookmarkEdit']});
+Meteor.Router.filter('clearErrors');

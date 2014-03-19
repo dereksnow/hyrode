@@ -36,7 +36,9 @@ Template.postSubmit.events({
             if(error) {
                 throwError(error.reason);
             }
-            Meteor.Router.to('postPage', id);
+            else {
+                Router.go('postPage', {_id: id});    
+            }            
         });     
     }
 });

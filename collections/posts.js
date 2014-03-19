@@ -1,7 +1,9 @@
+Links = new Meteor.Collection('links');
 Posts = new Meteor.Collection('posts');
 Features = new Meteor.Collection('features');
 Tags = new Meteor.Collection('tags');
 Ratings = new Meteor.Collection('ratings');
+PageBookmarks = new Meteor.Collection('pageBookmarks');
 
 // Tags.allow({
 //  insert: function(userId, doc) {
@@ -106,21 +108,22 @@ Meteor.methods({
                         {$set: { rateVal: rateVal }}
         );
         
-        // maintain sum and count of ratings in post and calculate avg
-        Posts.update({_id: postId},
+        // maintain sum and count of ratings in link and calculate avg
+        Links.upsert({_id: post.linkId},
                     {$inc: {ratingSum:changeInRating, ratingCount:changeInCount}});
 
 
-        post = Posts.findOne({_id: postId});
-        var avgRating = post.ratingSum / post.ratingCount; 
+        link = Links.findOne({_id: post.linkId});
+        var avgRating = link.ratingSum / link.ratingCount; 
 
-        Posts.update({_id: postId},
+        Links.update({_id: link._id},
             {$set: {rating: avgRating}});
 
     },
 
     post: function(postAttributes) {
         var user = Meteor.user();
+        var url = postAttributes.url;
 
         // ensure the user is logged in
         if (!user) {
@@ -131,6 +134,11 @@ Meteor.methods({
         if(!postAttributes.title) {
             throw new Meteor.Error(422, 'Please provide a title');
         }
+
+        // ensure the post has a url
+        if(!url) {
+            throw new Meteor.Error(422, 'Please provide a url');
+        }        
 
         var timeSinceLastPost=timeSinceLast(user, Posts);
         var numberOfPostsInPast24Hours=numberOfItemsInPast24Hours(user, Posts);
@@ -145,7 +153,26 @@ Meteor.methods({
           // check that the user doesn't post more than Y posts per day
           if(!this.isSimulation && numberOfPostsInPast24Hours > maxPostsPer24Hours)
             throw new Meteor.Error(605, 'Sorry, you cannot submit more than ' + maxPostsPer24Hours + ' posts per day');
-        }        
+        }  
+        var link = null;
+        var linkId = "";            
+        var link = Links.findOne({_id: url});
+
+        if(link){
+            linkId = link._id;
+        }
+        else {
+            // Links has index to ensure no duplicates
+            var linkId = Links.insert(
+            { 
+                _id: url,
+                created: new Date().getTime(),
+                rating: undefined,
+                ratingCount: 0,
+                ratingSum: 0                
+            });
+        }
+
 
         // pick out the whitelisted keys
         var post = _.extend(_.pick(postAttributes, 'url', 'title', 'message', 'features', 'tags'),
@@ -153,14 +180,13 @@ Meteor.methods({
             userId: Meteor.userId(),
             author: user.username,
             submitted: new Date().getTime(),
+            linkId: linkId,
             baseScore: 0,
             score: 0,
-            rating: undefined,
-            ratingCount: 0,
-            ratingSum: 0,
             upvoters: [],
             votes: 0,
-            inactive: false
+            inactive: false,
+            addToNew: true
 
         });
 
@@ -171,5 +197,31 @@ Meteor.methods({
 
         return postId;
 
+    },
+
+    pageBookmark: function(bookmarkAttributes) {
+        var user = Meteor.user();
+
+        // ensure the user is logged in
+        if (!user) {
+            throw new Meteor.Error(401, "You need to create a bookmark.");
+        }
+
+        // ensure the bookmark has a title
+        if(!bookmarkAttributes.title) {
+            throw new Meteor.Error(422, 'Please provide a title');
+        } 
+
+        // pick out the whitelisted keys
+        var bookmark = _.extend(_.pick(bookmarkAttributes, 'url', 'title', 'features', 'tags', 'personal'),
+        {
+            userId: Meteor.userId(),
+            created: new Date().getTime(),
+
+        });
+
+        var pageBookmarkId = PageBookmarks.insert(bookmark);       
+
+        return pageBookmarkId;               
     }
 });

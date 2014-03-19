@@ -1,6 +1,8 @@
 Template.postItemRating.rendered = function () {
     var post = Posts.findOne({_id: this.data._id});
-    var avgRating = Math.round(post.rating);
+    var linkId = post.linkId;
+    var link = Links.findOne({_id: linkId});
+    var avgRating = Math.round(link.rating);
     $(this.firstNode).find('.star_' + avgRating).prevAll().andSelf().addClass('ratings_vote');  
     $(this.firstNode).find('.star_' + avgRating).nextAll().removeClass('ratings_vote'); 
 }
@@ -23,7 +25,8 @@ Template.postItemRating.events({
 
         $(e.target).prevAll().andSelf().removeClass('ratings_over');
         var post = Posts.findOne({_id: this._id});
-        var avgRating = Math.round(post.rating);
+        var link = Links.findOne({_id: post.linkId});
+        var avgRating = Math.round(link.rating);
         $(e.target).parent().find('.star_' + avgRating).prevAll().andSelf().addClass('ratings_vote');  
         $(e.target).parent().find('.star_' + avgRating).nextAll().removeClass('ratings_vote');                                                     
 
@@ -48,7 +51,8 @@ Template.postItemRating.events({
         });
 
         var post = Posts.findOne({_id: postId});
-        var avgRating = Math.round(post.rating);
+        var link = Links.findOne({_id: post.linkId});
+        var avgRating = Math.round(link.rating);
         $(e.target).parent().find('.star_' + avgRating).prevAll().andSelf().addClass('ratings_vote');  
         $(e.target).parent().find('.star_' + avgRating).nextAll().removeClass('ratings_vote');
     }    

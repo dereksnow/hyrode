@@ -1,29 +1,25 @@
-<!-- Use conditionals to define areas not needed for bookmarks -->
-<template name="postItem">
+<template name="bookmarkedRes">
   <div class="post">
     <div class="vote">
-        <div class="btn-stack">
-          <a href="#" class="btn btn-primary {{upvotedClass}}"><i class="fa fa-fw fa-arrow-circle-up fa-2x"></i></a>
-        </div>
         <div class="btn-stack">
           <a href="{{pathFor 'saveBookmark' myBookmark}}" class="btn btn-primary {{bookmarkedClass}}"><i class="fa fa-fw fa-bookmark fa-2x"></i></a>
         </div>
     </div>
     <div class="post-content">
       <h3><a href="{{url}}">{{title}}</a><span>{{domain}}</span></h3>
-		{{#each features}}		
-	  		<i class="fa {{icon}}"></i>
-		{{/each}}
+        {{#each features}}      
+            <i class="fa {{icon}}"></i>
+        {{/each}}
         {{#each tags}}
             {{name}}
         {{/each}}
         {{> postItemRating}}
 
-		<p>  
+        <p>  
       {{votes}} Votes,          
-			Submitted by {{author}} {{submitted}}
+            Submitted by {{author}} {{submitted}}
             {{#if ownPost}}<a href="{{pathFor 'postEdit'}}">Edit</a>{{/if}}
-		</p>
+        </p>
     </div>
     <a href="{{pathFor 'postPage'}}" class="discuss btn btn-default">Discuss</a>
   </div>

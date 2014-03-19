@@ -1,7 +1,6 @@
-<template name="postEdit">
-    <h1>{{title}}</h1>
-		<form class="form-horizontal" role="form">
-      {{#with resource}}
+<template name="pageBookmarkEdit">
+    {{#with bookmark}}
+        <form class="form-horizontal" role="form">
       <div class="form-group">
         <label class="col-lg-1 control-label" for="url">URL</label>
         <div class="col-lg-5">
@@ -16,12 +15,12 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label class="col-lg-1 control-label" for="tags">Tags</label>
-        <div class="col-lg-5">
-          <input name="tags" class="form-control" type="text" value="{{tags}}" placeholder="Tags"/>
-        </div>
-      </div>      
+    <div class="form-group">
+      <label class="col-lg-1 control-label" for="tags">Tags</label>
+      <div class="col-lg-5">
+        <input name="tags" class="form-control" type="text" value="{{tags}}" placeholder="Tags"/>
+      </div>
+    </div>      
 
       <div class="form-group">
         <label class="col-lg-1 control-label" for="features">Features</label>
@@ -32,8 +31,7 @@
             </label>
           {{/each}}           
         </div>
-      </div>
-      {{/with}}
+      </div>   
       {{#if bookmark}}
       <div class="form-group">
         <label class="col-lg-1 control-label" for="private">Access</label>
@@ -43,19 +41,22 @@
         </label>
         </div>
       </div>    
-      {{/if}}
-       
-      {{#with resource}}
+      {{/if}} 
+
       <div class="form-group">
         <div row>
           <div class="col-lg-1">
             <a class="btn btn-danger delete" href="#">Delete post</a>
-          </div>        
+          </div>          
           <div class="col-lg-1 col-lg-offset-4">
             <input type="submit" value="Submit" class="btn btn-default"/>
           </div>
         </div>
       </div>
-      {{/with}}
+
+      <hr/>
+
+
     </form>
+  {{/with}}
 </template>
